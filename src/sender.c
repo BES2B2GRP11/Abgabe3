@@ -14,11 +14,34 @@
  * =====================================================================================
  */
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include "sender.h"
 
 int main(int argc, char** argv)
 {
   argc=argc;
   argv=argv;
-  return 0;
+  int c;
+  
+  
+  while((c = getopt (argc, argv, "h")) != -1)
+  {
+    switch (c)
+    {
+      case 'h':
+        print_help();
+        return EXIT_SUCCESS;
+      default:
+        return EXIT_FAILURE;
+    }
+  }
+  
+  return EXIT_SUCCESS;
+}
+
+void print_help(void)
+{
+  puts(help_message);
+  fflush(stdout);
 }
