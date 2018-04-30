@@ -17,4 +17,13 @@
 #define __empfaenger_h
 
 
+const char *help_message =
+  "     <<< empfaenger help >>>     \n"
+  "---------------------------------\n"
+  "-h           Gibt diese Hilfe aus\n"
+  "---------------------------------\n";
+
+void print_help(void);
+
+
 #endif /* empfaenger.h */

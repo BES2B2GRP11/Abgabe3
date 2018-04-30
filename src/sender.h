@@ -16,5 +16,12 @@
 #ifndef __sender_h
 #define __sender_h
 
+const char *help_message =
+  "       <<< sender help >>>       \n"
+  "---------------------------------\n"
+  "-h           Gibt diese Hilfe aus\n"
+  "---------------------------------\n";
+
+void print_help(void);
 
 #endif /* sender.h */
