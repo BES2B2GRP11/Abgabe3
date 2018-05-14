@@ -17,13 +17,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "sender.h"
+#include "ring_buffer.h"
 
 int main(int argc, char** argv)
 {
   argc=argc;
   argv=argv;
   int c;
-  
   
   while((c = getopt (argc, argv, "h")) != -1)
   {
@@ -36,6 +36,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
   }
+
   
   return EXIT_SUCCESS;
 }
