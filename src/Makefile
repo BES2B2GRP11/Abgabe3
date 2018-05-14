@@ -31,18 +31,34 @@
 ##
 ##
 CC=gcc52
-SOURCES=sender.c empfaenger.c
-DEPS=sender.h empfaenger.h
-OBJECTS=sender.o empfaenger.o
-CFLAGS=-DDEBUG -Wall -pedantic -Werror -Wextra -Wstrict-prototypes -Wformat=2 -fno-common -ftrapv -g -O3 -std=gnu11 -static
+SOURCES=sender.c empfaenger.c ring_buffer.c
+DEPS=sender.h empfaenger.h 
+OBJECTS=sender.o empfaenger.o 
+CFLAGS=-DDEBUG -Wall -pedantic -Werror -Wextra -Wstrict-prototypes -Wformat=2 -fno-common -ftrapv -g -O3 -std=gnu11 -static 
+LIBS=-lringbuf
+LDFLAGS=-L. $(LIBS)
 
-%.o: %.c $(DEPS)
-		$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 
 all: sender empfaenger
+
+s: sender
+
+e: empfaenger
+
+sender: sender.c sender.h libringbuf.a
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+
+empfaenger: empfaenger.c empfaenger.h libringbuf.a
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+
+libringbuf.a: libringbuf.o
+	ar rcs $@ $^
+
+libringbuf.o: ring_buffer.c ring_buffer.h
+	$(CC) $(CFLAGS) -c -o $@ $< 
 
 clean:
 		$(RM) *.{a,o} *~ sender empfaenger
 
-.PHONY: clean
+.PHONY: clean 
 

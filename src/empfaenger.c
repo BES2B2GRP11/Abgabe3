@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "empfaenger.h"
+#include "ring_buffer.h"
 
 int main(int argc, char** argv)
 {
@@ -36,6 +37,7 @@ int main(int argc, char** argv)
     }
     
   }
+
   return EXIT_SUCCESS;
 }
 
