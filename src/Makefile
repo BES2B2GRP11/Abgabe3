@@ -48,7 +48,7 @@ e: empfaenger
 sender: sender.c sender.h libringbuf.a libsharedmem.a
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-empfaenger: empfaenger.c empfaenger.h libringbuf.a
+empfaenger: empfaenger.c empfaenger.h libringbuf.a libsharedmem.a
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 %.a: %.o
