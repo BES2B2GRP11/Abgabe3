@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "empfaenger.h"
-#include "ring_buffer.h"
+#include "ringbuffer.h"
 
 int main(int argc, char** argv)
 {

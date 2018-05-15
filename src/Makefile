@@ -31,11 +31,11 @@
 ##
 ##
 CC=gcc52
-SOURCES=sender.c empfaenger.c ring_buffer.c
+SOURCES=sender.c empfaenger.c ringbuffer.c
 DEPS=sender.h empfaenger.h 
 OBJECTS=sender.o empfaenger.o 
 CFLAGS=-DDEBUG -Wall -pedantic -Werror -Wextra -Wstrict-prototypes -Wformat=2 -fno-common -ftrapv -g -O3 -std=gnu11 -static 
-LIBS=-lringbuf -lsharedmem -lsemaphores
+LIBS=-lringbuffer -lsharedmem -lsemaphores
 LDFLAGS=-L. $(LIBS)
 
 
@@ -45,16 +45,16 @@ s: sender
 
 e: empfaenger
 
-sender: sender.c sender.h libringbuf.a libsharedmem.a libsemaphores.a
+sender: sender.c sender.h libringbuffer.a libsharedmem.a libsemaphores.a
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-empfaenger: empfaenger.c empfaenger.h libringbuf.a libsharedmem.a libsemaphores.a
+empfaenger: empfaenger.c empfaenger.h libringbuffer.a libsharedmem.a libsemaphores.a
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 %.a: %.o
 	ar rcs $@ $^
 
-libringbuf.o: ring_buffer.c ring_buffer.h 
+libringbuffer.o: ringbuffer.c ringbuffer.h 
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 libsharedmem.o: sharedmem.c sharedmem.h 

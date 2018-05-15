@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "sender.h"
-#include "ring_buffer.h"
+#include "ringbuffer.h"
 #include "sharedmem.h"
 #include "semaphores.h"
 
