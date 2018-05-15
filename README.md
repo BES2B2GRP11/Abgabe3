@@ -5,11 +5,10 @@ Abgabe zum Beispiel 3 Gruppe 11 BES 2B2
 im **src** folder kann man **make s** bzw **make e** respektive abfeuern
 
 ## Libaries
-Für den Ringbuffer wurde eine statische library vorbereitet
-**ring_buffer.{c,h}**.
 
-Für alles was im shared-memory erstellt, verwaltet und gelöscht wird, wurde eine
-weitere statische library **sharedmem** vorbereitet. 
+ * **libringbuf.a** aus __ring_buffer.{c,h}__   Alles was den Ringbuffer angeht
+ * **libsharedmem.a** aus __sharedmem.{c,h}__   Alles was /dev/shm angeht 
+ * **libsemaphores.a** aus __semaphores.{c,h}__ Alles was semaphore angeht
  
 ## Semaphore und shared memory bits
 
