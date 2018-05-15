@@ -18,6 +18,8 @@
 #include <unistd.h>
 #include "sender.h"
 #include "ring_buffer.h"
+#include "sharedmem.h"
+#include "semaphores.h"
 
 int main(int argc, char** argv)
 {

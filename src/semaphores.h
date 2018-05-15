@@ -1,9 +1,9 @@
 /*
  * =====================================================================================
  *
- *       Filename:  sharedmem.h
+ *       Filename:  semaphores.h
  *
- *    Description:  Header fuer /dev/shm handling
+ *    Description:  Header fuer semaphroe handling
  *
  *        Version:  1.0.0
  *        Created:  04/30/2018 10:20:05 AM
@@ -13,11 +13,11 @@
  *         Author:  Ovidiu - Dan Bogat [ic17b501], ic17b501@technikum-wien.at
  * =====================================================================================
  */
-#ifndef __sharedmem_h
-#define __sharedmem_h
-#include <sys/types.h>
+#ifndef __semaphores_h
+#define __semaphores_h
+#include <stdlib.h>
 
-int create_shm(void);
-const char* shm_getname(void);
+const char* sem_getname(void);
 
-#endif /* sharedmem.h */
+
+#endif /* semaphores.h */
