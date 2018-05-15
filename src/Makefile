@@ -64,7 +64,7 @@ libsemaphores.o: semaphores.c semaphores.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-		$(RM) *.{a,o} *~ sender empfaenger
+	$(RM) *.{a,o} *~ sender empfaenger
 
 .PHONY: clean 
 
