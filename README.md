@@ -23,10 +23,15 @@ Aus der Angabe:
 >>
 >>
 >>    name0 = "/shm_{1000 * <uid> + 0}"
+>>
 >>    name1 = "/shm_{1000 * <uid> + 1}"
+>>
 >>    name2 = "/sem_{1000 * <uid> + 2}"
+>>
 >>    ...
+>>
 >>    nameX = "/sem_{1000 * <uid> + X}"
+>>
 >>    
 >>Hierbei soll <uid> Ihre eigene user ID sein, welche Sie durch Aufruf von id(1)
 >>auf der Kommandozeile bzw. getuid(2) aus Ihrem Programm heraus ermitteln können.
