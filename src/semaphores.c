@@ -1,9 +1,9 @@
 /*
  * =====================================================================================
  *
- *       Filename:  sharedmem.c
+ *       Filename:  semaphroe.c
  *
- *    Description:  Handlig fuer /dev/shm 
+ *    Description:  Handling der Semaphore
  *
  *        Version:  1.0.0
  *        Created:  04/30/2018 10:20:05 AM
@@ -13,26 +13,18 @@
  *         Author:  Ovidiu - Dan Bogat [ic17b501], ic17b501@technikum-wien.at
  * =====================================================================================
  */
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include "sharedmem.h"
+#include <stdio.h>
+#include "semaphores.h"
 
-int create_shm(void)
-{
-  
-  return -1;
-}
 
-const char* shm_getname(void)
+const char* sem_getname(void)
 {
-  static int shmcnt=0;
+  static int semcnt=0;
   uid_t id = getuid();
   char buffer[256];
-  sprintf(buffer, "shm_%d", 1000*id+(shmcnt++));
+  sprintf(buffer, "sem_%d", 1000*id+(semcnt++));
   return strdup(buffer);
 }
