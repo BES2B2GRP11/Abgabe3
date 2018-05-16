@@ -23,21 +23,26 @@
 
 int main(int argc, char** argv)
 {
-  argc=argc;
-  argv=argv;
-  int c;
+  long ringbuf_elmnts=0;
+  ringbuf_elmnts=ringbuf_elmnts;
+  int c=0;
   
-  while((c = getopt (argc, argv, "h")) != -1)
-  {
-    switch (c)
+  while((c = getopt (argc, argv, "hm:")) != -1)
     {
-      case 'h':
-        print_help();
-        return EXIT_SUCCESS;
-      default:
-        return EXIT_FAILURE;
+      switch (c)
+	{
+	case 'h':
+	  print_help();
+	  return EXIT_SUCCESS;
+	case 'm':
+	  ringbuf_elmnts=strtol(optarg,NULL,10);
+	  break;
+	default:
+	  return EXIT_FAILURE;
+	}
     }
-  }
+
+  shm_create();
 
   
   return EXIT_SUCCESS;

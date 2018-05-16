@@ -29,7 +29,8 @@
 ##
 ##
 
-CC=gcc52
+CC=gcc
+#CC=gcc52
 SUBDIRS=src
 RM=-rm -rf
 CFLAGS=-Wall -pedantic -Werror -Wextra -Wstrict-prototypes -Wformat=2 -fno-common -ftrapv -g -O3 -std=gnu89

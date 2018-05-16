@@ -17,14 +17,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <semaphore.h>
 #include "semaphores.h"
 
+int sem_create(sem_t *sem, int *shared, unsigned int *value)
+{
+  sem=sem;
+  shared=shared;
+  value=value;
+  return -1;
+}
 
 const char* sem_getname(void)
 {
   static int semcnt=0;
   uid_t id = getuid();
   char buffer[256];
-  sprintf(buffer, "sem_%d", 1000*id+(semcnt++));
+  sprintf(buffer, "/sem_%d", 1000*id+(semcnt++));
   return strdup(buffer);
 }
