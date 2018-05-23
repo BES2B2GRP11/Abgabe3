@@ -27,20 +27,33 @@
 #include <errno.h>
 #include "sharedmem.h"
 
-//int shm_create(const char *name, int *oflag, mode_t *mode)
-int shm_create(void)
-{
-  int ret;
-  ret = shm_open(shm_getname(),
-		 O_RDWR | O_CREAT | O_EXCL,
-		 0644
-		 );
+/* static const char  shm_mount[] = SHM_MOUNT; */
 
-  if(ret <= 0)
+/* const char *__shm_directory(size_t *len) */
+/* { */
+/*   if (len) */
+/*     *len = strlen(shm_mount); */
+/*   return shm_mount; */
+/* } */
+
+int* shm_create(void)
+{
+  int *shm_fd;
+
+  shm_fd = malloc(sizeof(int));
+  if(!shm_fd)
     {
-      strerror(errno);
+      return NULL;
     }
-  return ret;
+  
+  *shm_fd = shm_open(shm_getname(), O_CREAT | O_EXCL | O_RDWR, 0666);
+
+  if (*shm_fd == -1 || shm_fd == NULL) {
+    printf("prod: Shared memory failed: %s\n", strerror(errno));
+    exit(1);
+  }
+  
+  return shm_fd;
 }
 
 const char* shm_getname(void)

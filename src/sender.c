@@ -42,8 +42,9 @@ int main(int argc, char** argv)
 	}
     }
 
-  shm_create();
+  int *shm_fd = shm_create();
 
+  shm_fd=shm_fd;
   
   return EXIT_SUCCESS;
 }
