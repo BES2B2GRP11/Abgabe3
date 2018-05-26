@@ -16,8 +16,9 @@
 #ifndef __semaphores_h
 #define __semaphores_h
 #include <stdlib.h>
+#include <semaphore.h>
 
+int sem_create(sem_t *,int *, unsigned int *);
 const char* sem_getname(void);
-
 
 #endif /* semaphores.h */

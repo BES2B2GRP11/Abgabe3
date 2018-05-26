@@ -30,12 +30,13 @@
 ## Last Modified: $Author: Ovidiu $
 ##
 ##
-CC=gcc52
+CC=gcc
+#CC=gcc52
 SOURCES=sender.c empfaenger.c ringbuffer.c
 DEPS=sender.h empfaenger.h 
 OBJECTS=sender.o empfaenger.o 
-CFLAGS=-DDEBUG -Wall -pedantic -Werror -Wextra -Wstrict-prototypes -Wformat=2 -fno-common -ftrapv -g -O3 -std=gnu11 -static 
-LIBS=-lringbuffer -lsharedmem -lsemaphores
+CFLAGS=-DDEBUG -Wall -pedantic -Werror -Wextra -Wstrict-prototypes -Wformat=2 -fno-common -ftrapv -g -O3 -std=gnu11 -static -fbuiltin
+LIBS=-lringbuffer -lsharedmem -lsemaphores -Wl,--whole-archive -lrt -lpthread -Wl,--no-whole-archive
 LDFLAGS=-L. $(LIBS)
 
 
@@ -58,13 +59,13 @@ libringbuffer.o: ringbuffer.c ringbuffer.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 libsharedmem.o: sharedmem.c sharedmem.h 
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $< -lrt -lpthread
 
 libsemaphores.o: semaphores.c semaphores.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	$(RM) *.{a,o} *~ sender empfaenger
+	$(RM) *.a *.o *~ sender empfaenger
 
 .PHONY: clean 
 
