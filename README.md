@@ -39,16 +39,15 @@ Aus der Angabe:
 
 Hier eine Uebersicht:
 
-
 ```
-                         +------------------------------------------------------------------------------------------------+
-                         |  [Datei mit n fixen Bloecken in /dev/shm als circular-linked-list] == ringbuffer               |
-                         |  Ist fuer beide Programme gleich /dev/shm/shm_{1000*uid+0}                                     |
-                         |                                                                                                |
-                         |       1      2      3      4      5      6                                       n             |
-                         |     +---+  +---+  +---+  +---+  +---+  +---+                                   +---+           |
-                         |     |   |  |   |  |   |  |   |  |   |  |   |                                   |   |           |
-                         +---> |   +> |   +> |   +> |   +> |   +> |   +--------> . . . . . . . +--------> |   +-----------+
+                         +--------------------------------------------------------------------------------------+
+                         |  [Datei mit n fixen Bloecken in /dev/shm als circular-linked-list] == ringbuffer     |
+                         |  Ist fuer beide Programme gleich /dev/shm/shm_{1000*uid+0}                           |
+                         |                                                                                      |
+                         |       1      2      3      4      5      6                                       n   |
+                         |     +---+  +---+  +---+  +---+  +---+  +---+                                   +---+ |
+                         |     |   |  |   |  |   |  |   |  |   |  |   |                                   |   | |
+                         +---> |   +> |   +> |   +> |   +> |   +> |   +--------> . . . . . . . +--------> |   +-+
                                +-+-+  +-+-+  +-+-+  +-+-+  +-+-+  +-+-+                                   +-+-+
                                  ^      ^      ^      ^      ^      ^                                       ^
                                  |      |      |      |      |      |                                       |
@@ -63,20 +62,20 @@ Hier eine Uebersicht:
                                +------------+-+-------------------------------------------+------------------+
                                             ^ ^
                                             | |
-+-----------------------------+             | |                                     +----------------------------------+
-|   Sender                    |             | |                                     |                       Empfaenger |
-+-----------------------------+             | |                                     +----------------------------------+
-|                             |             | |                                     |                                  |
-| int fd = /dev/shm/shm_...   |             | |                                     |  int fd = /dev/shm/shm_...       |
-|                             +-------------+ +-------------------------------------+                                  |
-| Complex+Semaphore+up()      |                                                     |  Complex+Semaphore+up()          |
-|                             | Alle Arbeiten mit den gleichen Dateien.             |                                  |
-| write to ringbuffer@dev/shm | Bei uns macht es die Reihenfolge:                   |  read from ringbuffer@dev/shm    |
-|                             |                                                     |                                  |
-| Complex+Semaphore+down()    | /dev/shm_{1000*uid+j} -> j = 0 ==> ringbuffer       |  Complex+Semaphore+down()        |
-|                             |                                                     |                                  |
-| atexit(cleanup)             | Fuer Semaphore:                                     |  atexit(cleanup)                 |
-+-----------------------------+ /de /sem_{1000*uid+j} -> j = 0 --> complex-sem.     +----------------------------------+
++-----------------------------+             | |                                     +------------------------------+
+|   Sender                    |             | |                                     |                    Empfaenger|
++-----------------------------+             | |                                     +------------------------------+
+|                             |             | |                                     |                              |
+| int fd = /dev/shm/shm_...   |             | |                                     |  int fd = /dev/shm/shm_...   |
+|                             +-------------+ +-------------------------------------+                              |
+| Complex+Semaphore+up()      |                                                     |  Complex+Semaphore+up()      |
+|                             | Alle Arbeiten mit den gleichen Dateien.             |                              |
+| write to ringbuffer@dev/shm | Bei uns macht es die Reihenfolge:                   |  read from ringbuffer@dev/shm|
+|                             |                                                     |                              |
+| Complex+Semaphore+down()    | /dev/shm_{1000*uid+j} -> j = 0 ==> ringbuffer       |  Complex+Semaphore+down()    |
+|                             |                                                     |                              |
+| atexit(cleanup)             | Fuer Semaphore:                                     |  atexit(cleanup)             |
++-----------------------------+ /de /sem_{1000*uid+j} -> j = 0 --> complex-sem.     +------------------------------+
                                 /dev/sem_{1000*uid+j} -> j = 1 --> ring buffer sem
 
                                 Der Complex-Semaphore gibt an, wie viele threads
@@ -87,4 +86,5 @@ Hier eine Uebersicht:
 
                                 Der Ring buffer Semaphore wird verwendet um das Lesen und Schreiben
                                 in dem Ringbuffer zu Synchronisieren.
+
 ```
