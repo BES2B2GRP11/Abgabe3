@@ -41,7 +41,7 @@ und der Binary gibt an, ob der Buffer gerade fuer eine Lese- oder Schreiboperati
 Wir sollen semaphore ohne busy-waiting verwenden. 
 
 ## Links
-[https://embedjournal.com/implementing-circular-buffer-embedded-c/][Gute Ressource zum RingBuffer]
+[Gute Ressource zum Ring-Buffer Clicke hier :D](https://embedjournal.com/implementing-circular-buffer-embedded-c/ "Embedded FTW")
 
 Anleitungsvideo leider ohne Sound aber mit viel Text :)
 
