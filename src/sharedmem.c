@@ -27,35 +27,34 @@
 #include <errno.h>
 #include "sharedmem.h"
 
-/* static const char  shm_mount[] = SHM_MOUNT; */
-
-/* const char *__shm_directory(size_t *len) */
-/* { */
-/*   if (len) */
-/*     *len = strlen(shm_mount); */
-/*   return shm_mount; */
-/* } */
-
 int* shm_create(void)
 {
   int *shm_fd;
 
   shm_fd = malloc(sizeof(int));
-  if(!shm_fd)
+  if(shm_fd == NULL)
     {
       return NULL;
     }
   
-  *shm_fd = shm_open(shm_getname(), O_CREAT | O_EXCL | O_RDWR, 0666);
+  *shm_fd = shm_open(
+		     shm_getname(),
+		     O_CREAT | O_EXCL | O_RDWR,
+		     0666
+		     );
 
   if (*shm_fd == -1 || shm_fd == NULL) {
-    printf("prod: Shared memory failed: %s\n", strerror(errno));
+    fprintf(stderr,"[Error] %s\n", strerror(errno));
     exit(1);
   }
   
   return shm_fd;
 }
 
+/* \brief Retourniert den naechsten Namen
+ * 
+ * \author Ovidiu - Dan Bogat
+ */
 const char* shm_getname(void)
 {
   static int shmcnt=0;
@@ -64,3 +63,4 @@ const char* shm_getname(void)
   sprintf(buffer, "/shm_%d", 1000*id+(shmcnt++));
   return strdup(buffer);
 }
+

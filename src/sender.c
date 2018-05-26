@@ -26,8 +26,8 @@ int main(int argc, char** argv)
   long ringbuf_elmnts=0;
   ringbuf_elmnts=ringbuf_elmnts;
   int c=0;
-  
-  while((c = getopt (argc, argv, "hm:")) != -1)
+
+  while((c = getopt (argc, argv, "hm:l:")) != -1)
     {
       switch (c)
 	{
