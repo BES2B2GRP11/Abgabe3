@@ -35,9 +35,20 @@ Aus der Angabe:
 >Hierbei soll <uid> Ihre eigene user ID sein, welche Sie durch Aufruf von id(1)
 >auf der Kommandozeile bzw. getuid(2) aus Ihrem Programm heraus ermitteln können.
 
+Wird brauchen ein complex bzw ein counting und binary semaphore. Counting sagt an wie viele Prozesse noch mit dem Buffer arbeiten,
+und der Binary gibt an, ob der Buffer gerade fuer eine Lese- oder Schreiboperation verfuegbar ist.
 
+Wir sollen semaphore ohne busy-waiting verwenden. 
 
-Hier eine Uebersicht:
+## Links
+[https://embedjournal.com/implementing-circular-buffer-embedded-c/][Gute Ressource zum RingBuffer]
+
+Anleitungsvideo leider ohne Sound aber mit viel Text :)
+
+[![IMAGE ALT TEXT
+HERE](http://img.youtube.com/vi/2--Z-iC2EYk/0.jpg)](http://www.youtube.com/watch?v=2--Z-iC2EYk)
+
+## Hier eine Uebersicht:
 
 ```
                          +--------------------------------------------------------------------------------------+
