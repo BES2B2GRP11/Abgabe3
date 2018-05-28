@@ -14,5 +14,20 @@
  * =====================================================================================
  */
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include "ringbuffer.h"
 
+ringbuffer *create_ringbuffer(int size)
+{
+  size=size;
+  ringbuffer *r = malloc(sizeof(ringbuffer));
+  if(r == NULL)
+    {
+      fprintf(stderr,"[Error] ringbuffer");
+      return NULL;
+    }
+  
+  return r;
+}
+			   

@@ -68,7 +68,7 @@
 
 int main(int argc, char** argv)
 {
-  argc=argc;
+  argc=argc; 
   argv=argv;
   int c;
   

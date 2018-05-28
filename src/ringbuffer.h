@@ -16,4 +16,14 @@
 #ifndef __ringbuffer_h
 #define __ringbuffer_h
 
+#include <stdint.h>
+
+typedef struct _ringbuffer
+{
+  uint8_t * const buffer;
+  int head;
+  int tail;
+  const int max_length;
+} ringbuffer;
+
 #endif /* ringbuffer.h */

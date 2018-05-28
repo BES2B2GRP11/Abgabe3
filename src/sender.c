@@ -73,7 +73,6 @@
 int main(int argc, char** argv)
 {
   long ringbuf_elmnts=0;
-  ringbuf_elmnts=ringbuf_elmnts;
   int c=0;
 
   while((c = getopt (argc, argv, "hm:l:")) != -1)
@@ -91,9 +90,13 @@ int main(int argc, char** argv)
 	}
     }
 
-  int *shm_fd = shm_create();
+  ringbuf_elmnts=ringbuf_elmnts; // DELETE THIS LINE
 
+  
+  int *shm_fd = shm_create();
+  
   shm_fd=shm_fd;
+
   
   return EXIT_SUCCESS;
 }
