@@ -38,7 +38,7 @@
 
 /*                                +----------------------------------------------------------+------------------+ */
 /*                                |                                                          |                  | */
-/*                                |  [Datei mit n fixen blöcken]+>/de^/shm/shm_{1000*uid+j}  |  /dev/shm @ RAM  | */
+/*                                |  [Datei mit n fixen blöcken]+>/dev/shm/shm_{1000*uid+j}  |  /dev/shm @ RAM  | */
 /*                                |                                                          |                  | */
 /*                                +------------+-+-------------------------------------------+------------------+ */
 /*                                             ^ ^ */
@@ -56,7 +56,7 @@
 /* | Complex+Semaphore+down()    | /dev/shm_{1000*uid+j} -> j = 0 ==> ringbuffer    |  Complex+Semaphore+down()    | */
 /* |                             |                                                  |                              | */
 /* | atexit(cleanup)             | Fuer Semaphore:                                  |  atexit(cleanup)             | */
-/* +-----------------------------+ /de /sem_{1000*uid+j} -> j = 0 --> complex-sem.  +------------------------------+ */
+/* +-----------------------------+ /dev/sem_{1000*uid+j} -> j = 0 --> complex-sem.  +------------------------------+ */
 /*                                 /dev/sem_{1000*uid+j} -> j = 1 --> ring buffer sem */
 
 /*                                 Der Complex-Semaphore gibt an, wie viele threads */
