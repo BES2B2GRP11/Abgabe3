@@ -16,10 +16,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <error.h>
+#include <errno.h>
 #include "sender.h"
 #include "ringbuffer.h"
 #include "sharedmem.h"
 #include "semaphores.h"
+#include "error_handling.h"
 
 /*                          +----------------------------------------------------------------------------------+ */
 /*                          |  [Datei mit n fixen Bloecken in /dev/shm als circular-linked-list] == ringbuffer | */
@@ -96,7 +99,8 @@ int main(int argc, char** argv)
   int *shm_fd = shm_create();
   
   shm_fd=shm_fd;
-
+  errno=EINVAL;
+  handle_error(FATAL,"%s","ovidiu");
   
   return EXIT_SUCCESS;
 }

@@ -97,12 +97,11 @@
     */
 static void print_error(int sys_meld, const char *fmt, va_list az)
 {
-  int error_number = errno;
   char buffer[4096];
-  
+  sys_meld=sys_meld;
   vsprintf(buffer, fmt, az);
-  if(sys_meld && error_number != 0)
-    sprintf(buffer+strlen(buffer), ": %s\n", strerror(error_number));
+  //  if(sys_meld && errno != 0)
+  sprintf(buffer+strlen(buffer), ": %s\n", strerror(errno));
   fflush(NULL);
   return;
 
@@ -134,6 +133,8 @@ void handle_error (enum ERRORTYPE error_type, const char* fmt, ...)
     case INFO:
     case DBUG:
     case WARN:
+      print_error(1,fmt,az);
+      break;
     case FATAL:
       print_error(1,fmt,az);
       break;
@@ -145,9 +146,10 @@ void handle_error (enum ERRORTYPE error_type, const char* fmt, ...)
 
   if(error_type==FATAL)
     {
-      //WOULD HAVE BEEN CLEANER
-      //      if ( errno == EINVAL )
-      //	print_usage();
-      exit(errno);
+      if(errno == EINVAL)
+	{
+	  fprintf(stderr,"Invalid");
+	  exit(errno);
+	}
     }
 }		/* -----  end of function handle_error  ----- */

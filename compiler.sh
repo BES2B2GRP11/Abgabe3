@@ -7,4 +7,4 @@ else
 	sed -i -e 's/^CC\=gcc52$/CC\=gcc/g' Makefile src/Makefile
 fi
 
-printf "CC set accordingly"
+printf "CC set accordingly\n"
