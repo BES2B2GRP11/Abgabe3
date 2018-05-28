@@ -30,12 +30,12 @@
 ## Last Modified: $Author: Ovidiu $
 ##
 ##
-CC=gcc
+CC=gcc52
 SOURCES=sender.c empfaenger.c ringbuffer.c
 DEPS=sender.h empfaenger.h 
 OBJECTS=sender.o empfaenger.o 
 CFLAGS=-DDEBUG -Wall -pedantic -Werror -Wextra -Wstrict-prototypes -Wformat=2 -fno-common -ftrapv -g -O3 -std=gnu11 -static -fbuiltin
-LIBS=-lringbuffer -lsharedmem -lsemaphores -Wl,--whole-archive -lrt -lpthread -Wl,--no-whole-archive
+LIBS=-lringbuffer -lsharedmem -lsemaphores -lerrorhandling -Wl,--whole-archive -lrt -lpthread -Wl,--no-whole-archive
 LDFLAGS=-L. $(LIBS)
 
 
@@ -45,10 +45,10 @@ s: sender
 
 e: empfaenger
 
-sender: sender.c sender.h libringbuffer.a libsharedmem.a libsemaphores.a
+sender: sender.c sender.h libringbuffer.a libsharedmem.a libsemaphores.a liberrorhandling.a
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-empfaenger: empfaenger.c empfaenger.h libringbuffer.a libsharedmem.a libsemaphores.a
+empfaenger: empfaenger.c empfaenger.h libringbuffer.a libsharedmem.a libsemaphores.a liberrorhandling.a
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 %.a: %.o
@@ -61,6 +61,9 @@ libsharedmem.o: sharedmem.c sharedmem.h
 	$(CC) $(CFLAGS) -c -o $@ $< -lrt -lpthread
 
 libsemaphores.o: semaphores.c semaphores.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+liberrorhandling.o: error_handling.c error_handling.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
