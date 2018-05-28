@@ -31,7 +31,6 @@
 ##
 ##
 CC=gcc
-#CC=gcc52
 SOURCES=sender.c empfaenger.c ringbuffer.c
 DEPS=sender.h empfaenger.h 
 OBJECTS=sender.o empfaenger.o 

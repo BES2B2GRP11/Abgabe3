@@ -4,6 +4,10 @@ Abgabe zum Beispiel 3 Gruppe 11 BES 2B2
 ## nur sender oder empfänger bauen
 im **src** folder kann man **make s** bzw **make e** respektive abfeuern
 
+## Skript compiler.sh
+Aender den Compiler je nach Bedarf (gcc/gcc52 am annuminas)
+Einfach vor dem make bzw. beim clonen der Repository "./compiler.sh" ausfuehren"
+
 ## Libaries
 
  * **libringbuffer.a** aus __ringbuffer.{c,h}__ Alles was den Ringbuffer angeht
