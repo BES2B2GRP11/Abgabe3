@@ -20,8 +20,6 @@
 #include <errno.h>
 #include "sender.h"
 #include "ringbuffer.h"
-#include "sharedmem.h"
-#include "semaphores.h"
 #include "error_handling.h"
 
 /*                          +----------------------------------------------------------------------------------+ */
@@ -71,14 +69,16 @@
 /*                                 Der Ring buffer Semaphore wird verwendet um das Lesen und Schreiben */
 /*                                 in dem Ringbuffer zu Synchronisieren. */
 
-
+static ringbuffer *rbf;
 
 int main(int argc, char** argv)
 {
-  long ringbuf_elmnts=0;
+  atexit(cleanup);
+  rbf = NULL;
+  size_t ringbuf_elmnts=0; //size_t mit strtol hat ein ende 
   int c=0;
-
-  while((c = getopt (argc, argv, "hm:l:")) != -1)
+  
+  while((c = getopt (argc, argv, "hm:")) != -1)
     {
       switch (c)
 	{
@@ -89,19 +89,13 @@ int main(int argc, char** argv)
 	  ringbuf_elmnts=strtol(optarg,NULL,10);
 	  break;
 	default:
-	  return EXIT_FAILURE;
+	  errno=EINVAL;
+	  handle_error(FATAL,"Unknown option %s",argv);
 	}
     }
 
-  ringbuf_elmnts=ringbuf_elmnts; // DELETE THIS LINE
+  rbf=rbf_init(ringbuf_elmnts);
 
-  
-  int *shm_fd = shm_create();
-  
-  shm_fd=shm_fd;
-  errno=EINVAL;
-  handle_error(FATAL,"%s","ovidiu");
-  
   return EXIT_SUCCESS;
 }
 
@@ -109,4 +103,12 @@ void print_help(void)
 {
   puts(help_message);
   fflush(stdout);
+}
+
+void cleanup()
+{
+  /* cleanup fuer den ringbuffer */
+  if(rbf)
+    rbf_destroy(rbf);
+  
 }

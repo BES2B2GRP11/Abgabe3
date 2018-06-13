@@ -22,5 +22,6 @@ enum ERRORTYPE { INFO, DBUG, WARN, FATAL };
 //void print_usage(void);
 //void print_help(void);
 void handle_error(enum ERRORTYPE, const char*,...);
+void DBG(const char*,...);
 
 #endif /* error_handling.h */

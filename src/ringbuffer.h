@@ -23,7 +23,10 @@ typedef struct _ringbuffer
   uint8_t * const buffer;
   int head;
   int tail;
-  const int max_length;
+  const size_t max_length;
 } ringbuffer;
+
+ringbuffer* rbf_init(size_t);
+ringbuffer* rbf_destroy(ringbuffer*);
 
 #endif /* ringbuffer.h */

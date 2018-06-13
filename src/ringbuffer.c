@@ -16,18 +16,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
+#include "sharedmem.h"
 #include "ringbuffer.h"
+#include "error_handling.h"
 
-ringbuffer *create_ringbuffer(int size)
+ringbuffer* rbf_init(size_t n)
 {
-  size=size;
-  ringbuffer *r = malloc(sizeof(ringbuffer));
-  if(r == NULL)
+  ringbuffer *p;
+  uint8_t lbuffer[n];
+
+#ifdef DEBUG
+  DBG("Creating a buffer with size %-2.ld",++n);
+#endif
+  
+  ringbuffer local = {
+    .buffer = lbuffer,
+    .head = 0,
+    .tail = 0,
+    .max_length = n
+  };
+  
+  p=malloc(sizeof(ringbuffer));
+  if(p==NULL)
     {
-      fprintf(stderr,"[Error] ringbuffer");
+      handle_error(FATAL,"malloc for ringbuffer");
       return NULL;
     }
-  
-  return r;
+
+  memcpy(p,&local,sizeof(ringbuffer));
+  return p;
 }
-			   
+
+ringbuffer* rbf_destroy(ringbuffer *rbf)
+{
+#ifdef DEBUG
+  DBG("Deconstructing ringbuffer");
+#endif
+  if(rbf == NULL)
+    return NULL;
+  
+  return NULL;
+}

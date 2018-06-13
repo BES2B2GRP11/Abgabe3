@@ -116,10 +116,10 @@ static void print_error(int sys_meld, const char *fmt, va_list az)
  *
  *//*!
     * @author Ovidiu - Dan Bogat
-    *	@brief Handles errros according to errno and the defined ERRORTYPE
+    * @brief Handles errros according to errno and the defined ERRORTYPE
     * @param error_type (enum ERRORTYPE)
-    *	@version 1.0.0
-    *	@date 2018/03/01
+    * @version 1.0.0
+    * @date 2018/03/01
     * =====================================================================================
     */
 void handle_error (enum ERRORTYPE error_type, const char* fmt, ...)
@@ -148,8 +148,20 @@ void handle_error (enum ERRORTYPE error_type, const char* fmt, ...)
     {
       if(errno == EINVAL)
 	{
-	  fprintf(stderr,"Invalid");
 	  exit(errno);
 	}
     }
 }		/* -----  end of function handle_error  ----- */
+
+
+void DBG(const char* fmt, ...)
+{
+  char buffer[4096];
+  va_list az;
+  va_start(az,fmt);
+  sprintf(buffer, "[DEBUG] ");
+  vsprintf(buffer+8, fmt, az);
+  fprintf(stderr,"%s\n",buffer);
+  fflush(NULL);
+  va_end(az);
+}		/* -----  end of function DBG  ----- */

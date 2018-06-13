@@ -23,5 +23,6 @@ const char *help_message =
   "---------------------------------\n";
 
 void print_help(void);
+void cleanup(void);
 
 #endif /* sender.h */

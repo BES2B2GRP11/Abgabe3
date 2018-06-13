@@ -27,19 +27,19 @@
 #include <errno.h>
 #include "sharedmem.h"
 
-int* shm_create(void)
+int shm_create(void)
 {
   int *shm_fd;
 
   shm_fd = malloc(sizeof(int));
   if(shm_fd == NULL)
     {
-      return NULL;
+      return -1;
     }
   
   *shm_fd = shm_open(
 		     shm_getname(),
-		     O_CREAT | O_EXCL | O_RDWR,
+		     O_CREAT | O_EXCL | O_RDWR, //man shm_open
 		     0666
 		     );
 
@@ -48,7 +48,7 @@ int* shm_create(void)
     exit(1);
   }
   
-  return shm_fd;
+  return 0;
 }
 
 /* \brief Retourniert den naechsten Namen
@@ -64,3 +64,13 @@ const char* shm_getname(void)
   return strdup(buffer);
 }
 
+int shm_close(int *fd)
+{
+  if(fd != NULL)
+    {
+      puts("cleaning");
+      close(*fd);
+      return 0;
+    }
+  return 0;
+}
