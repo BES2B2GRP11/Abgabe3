@@ -27,7 +27,7 @@
 #include <errno.h>
 #include "sharedmem.h"
 
-int *shm_create(size_t n)
+int *shm_create(size_t n, char *name)
 {
   int *shm_fd;
   shm_fd = malloc(sizeof(int));
@@ -40,7 +40,7 @@ int *shm_create(size_t n)
   /* Aus SysV  --> shmget gefolgt von shmat  <-- arbeitet mit keys */
   /* POSIX FTW --> shm_open gefolgt von mmap <-- arbeitet mit file-descriptors */
   *shm_fd = shm_open(
-		     shm_getname(),
+		     name,
 		     O_CREAT | O_EXCL | O_RDWR, //man shm_open
 		     0666
 		     );

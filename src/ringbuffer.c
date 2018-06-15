@@ -31,15 +31,18 @@ static char *shm = NULL; /* Die start Adresse des Buffers */
 ringbuffer* rbf_init(size_t n)
 {
   ringbuffer *p;
+  const char *name = NULL;
 #ifdef DEBUG
   DBG("Creating a buffer with size %ld",++n);
 #endif
-  
+
+  name = shm_getname();
   ringbuffer local = {
     /* shm_reate()... wir erstellen das file nur */
     /* wir verwenden den fd dann im jeweiligen programm fuer shmat */
     /* um es in den jeweiligen adressbereich zu kopieren */
-    .buffer = shm_create(n),
+    .shmname = name,
+    .buffer = shm_create(n, (char*) name),
     .head = 0,
     .tail = 0,
     .max_length = n /* shm datei wurde bereits getrunated auf n */
@@ -70,6 +73,7 @@ ringbuffer* rbf_destroy(ringbuffer *rbf)
 {
   /* wenn kein prozess mehr im geschuetzten bereich (counting semaphore) */
   /* shm_unlink rbf->buffer */
+  
 #ifdef DEBUG
   DBG("Deconstructing ringbuffer");
 #endif
@@ -79,11 +83,13 @@ ringbuffer* rbf_destroy(ringbuffer *rbf)
       shm=NULL;
     }
 
+#ifdef DEBUG
+  DBG("Unlinking %s",rbf->shmname);
+#endif
+  shm_unlink(rbf->shmname);
   
   if(rbf == NULL)
     return NULL;
-
-
   
   return NULL;
 }
@@ -118,7 +124,7 @@ int rbf_write(ringbuffer *rbf, uint8_t data)
 #endif
 
   if(++rbf->head >= (signed int)rbf->max_length)
-    rbf->head = *shm;
+      rbf->head = 0;
 
   return 0;
 }

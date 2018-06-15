@@ -20,6 +20,7 @@
 
 typedef struct _ringbuffer
 {
+  const char *shmname;
   int* const buffer; /* File pointer zu shm */
   int head;          /* Administrative ringbuffer sachen */
   int tail;
