@@ -26,7 +26,7 @@
 //#endif
 
 //const char *__shm_directory(size_t *len);
-int shm_create(void);
+int *shm_create(size_t);
 const char* shm_getname(void);
 int shm_close(int*);
 

@@ -95,7 +95,12 @@ int main(int argc, char** argv)
     }
 
   rbf=rbf_init(ringbuf_elmnts);
-
+#ifdef DEBUG
+  DBG("Got a ringbuffer with max_length %ld",rbf->max_length);
+#endif
+  rbf_write(rbf,'c');
+  rbf_write(rbf,'y');
+  
   return EXIT_SUCCESS;
 }
 

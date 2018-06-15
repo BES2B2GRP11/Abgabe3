@@ -27,16 +27,18 @@
 #include <errno.h>
 #include "sharedmem.h"
 
-int shm_create(void)
+int *shm_create(size_t n)
 {
   int *shm_fd;
-
   shm_fd = malloc(sizeof(int));
   if(shm_fd == NULL)
     {
-      return -1;
+      return NULL;
     }
-  
+
+  /* shm_open und wir leben POSIX anstatt shmget */
+  /* Aus SysV  --> shmget gefolgt von shmat  <-- arbeitet mit keys */
+  /* POSIX FTW --> shm_open gefolgt von mmap <-- arbeitet mit file-descriptors */
   *shm_fd = shm_open(
 		     shm_getname(),
 		     O_CREAT | O_EXCL | O_RDWR, //man shm_open
@@ -47,8 +49,10 @@ int shm_create(void)
     fprintf(stderr,"[Error] %s\n", strerror(errno));
     exit(1);
   }
+
+  ftruncate(*shm_fd, n);
   
-  return 0;
+  return shm_fd;
 }
 
 /* \brief Retourniert den naechsten Namen

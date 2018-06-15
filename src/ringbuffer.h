@@ -20,13 +20,17 @@
 
 typedef struct _ringbuffer
 {
-  uint8_t * const buffer;
-  int head;
+  int* const buffer; /* File pointer zu shm */
+  int head;          /* Administrative ringbuffer sachen */
   int tail;
   const size_t max_length;
 } ringbuffer;
 
 ringbuffer* rbf_init(size_t);
 ringbuffer* rbf_destroy(ringbuffer*);
+int rbf_write(ringbuffer*,uint8_t);
+int rbf_read(ringbuffer*,uint8_t);
+int rbf_is_full(ringbuffer*);
+int rbf_is_empty(ringbuffer*);
 
 #endif /* ringbuffer.h */
