@@ -18,7 +18,8 @@
 #include <stdlib.h>
 #include <semaphore.h>
 
-int sem_create(sem_t *,int *, unsigned int *);
+//int sem_create(sem_t*,int, unsigned int);
+sem_t* sem_create(void);
 const char* sem_getname(void);
 
 #endif /* semaphores.h */

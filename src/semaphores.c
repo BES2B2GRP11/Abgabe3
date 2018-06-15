@@ -17,21 +17,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <sys/stat.h>        /* mode Konstanten */
+#include <fcntl.h>           /* O_* Konstanten (O_CREAT) */
 #include <semaphore.h>
 #include "semaphores.h"
 
-int sem_create(sem_t *sem, int *shared, unsigned int *value)
+//sem_t* sem_create(sem_t *l,int shared, unsigned int value)
+sem_t* sem_create(void)
 {
-  sem=sem;
-  shared=shared;
-  value=value;
-  //  int *sem_fd;
-  //  *sem_fd = open(SEM_KEY_FILE, O_WRONLY | O_TRUNC | O_EXCL | O_CREAT, 0644);
-  //  if(*sem_fd < 0)
-  //    {
-      
-  //    }
-  return -1;
+  return sem_open(sem_getname(), O_CREAT|O_RDWR,S_IRUSR|S_IWUSR, 2);
+
+  return NULL;
 }
 
 const char* sem_getname(void)

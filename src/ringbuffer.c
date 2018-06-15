@@ -22,11 +22,14 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <semaphore.h>
 #include "sharedmem.h"
+#include "semaphores.h"
 #include "ringbuffer.h"
 #include "error_handling.h"
 
 static char *shm = NULL; /* Die start Adresse des Buffers */
+static sem_t *sem = NULL; /* Der counting semaphore */
 
 ringbuffer* rbf_init(size_t n)
 {
@@ -64,6 +67,10 @@ ringbuffer* rbf_init(size_t n)
       return NULL;
     }
 
+  /* sempahore wird automatisch auf 2 gesetzt in der wrapper funktion */
+  if(sem == NULL)
+    sem = sem_create();
+  
   memcpy(p,&local,sizeof(ringbuffer));
   
   return p;
