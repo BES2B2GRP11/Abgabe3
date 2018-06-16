@@ -29,17 +29,20 @@
 #include "error_handling.h"
 
 static char *shm = NULL; /* Die start Adresse des Buffers */
-static sem_t *sem = NULL; /* Der counting semaphore */
 
 ringbuffer* rbf_init(size_t n)
 {
   ringbuffer *p;
   const char *name = NULL;
+  const char *sem_shm_name = NULL;
+  const char *sem_buffer_name = NULL;
 #ifdef DEBUG
-  DBG("Creating a buffer with size %ld",++n);
+  DBG("Creating a buffer with a requested size %ld",++n);
 #endif
 
   name = shm_getname();
+  sem_shm_name = sem_getname();
+  sem_buffer_name = sem_getname();
   ringbuffer local = {
     /* shm_reate()... wir erstellen das file nur */
     /* wir verwenden den fd dann im jeweiligen programm fuer shmat */
@@ -48,7 +51,9 @@ ringbuffer* rbf_init(size_t n)
     .buffer = shm_create(n, (char*) name),
     .head = 0,
     .tail = 0,
-    .max_length = n /* shm datei wurde bereits getrunated auf n */
+    .max_length = n, /* shm datei wurde bereits getrunated auf n */
+    .sem_shm = sem_create(sem_shm_name, 2),
+    .sem_buffer = sem_create(sem_buffer_name, 1)
   };
 
   if (local.buffer == NULL)
@@ -67,9 +72,10 @@ ringbuffer* rbf_init(size_t n)
       return NULL;
     }
 
-  /* sempahore wird automatisch auf 2 gesetzt in der wrapper funktion */
-  if(sem == NULL)
-    sem = sem_create();
+#ifdef DEBUG
+  DBG("shm semaphore    initialized at %ld",sem_val(local.sem_shm));
+  DBG("buffer semaphore initialized at %ld",sem_val(local.sem_buffer));
+#endif
   
   memcpy(p,&local,sizeof(ringbuffer));
   
@@ -80,6 +86,41 @@ ringbuffer* rbf_destroy(ringbuffer *rbf)
 {
   /* wenn kein prozess mehr im geschuetzten bereich (counting semaphore) */
   /* shm_unlink rbf->buffer */
+
+  if(rbf->sem_shm != NULL && sem_val(rbf->sem_shm) < rbf->sem_shm->max_value)
+    {
+#ifdef DEBUG
+  DBG("Got sem semaphore value %ld", sem_val(rbf->sem_shm));
+  DBG("Setting sem semaphore up");
+#endif
+      sem_post(rbf->sem_shm->sem);
+#ifdef DEBUG
+  DBG("Got sem semaphore value %ld", sem_val(rbf->sem_shm));
+#endif
+    } else{
+#ifdef DEBUG
+    DBG("Got sem semaphore value %ld", sem_val(rbf->sem_shm));
+#endif
+  }
+  
+  if(sem_val(rbf->sem_shm) >= rbf->sem_shm->max_value)
+    sem_del(rbf->sem_shm);
+
+  if(rbf->sem_buffer != NULL && sem_val(rbf->sem_buffer) < rbf->sem_buffer->max_value)
+    {
+#ifdef DEBUG
+  DBG("Got buffer semaphore value %ld", sem_val(rbf->sem_buffer));
+  DBG("Setting buffer semaphore up");
+#endif
+      sem_post(rbf->sem_buffer->sem);
+#ifdef DEBUG
+  DBG("Got buffer semaphore value %ld", sem_val(rbf->sem_buffer));
+#endif
+    }  
+  
+  if(sem_val(rbf->sem_buffer) >= rbf->sem_buffer->max_value)
+    sem_del(rbf->sem_buffer);
+
   
 #ifdef DEBUG
   DBG("Deconstructing ringbuffer");
@@ -97,6 +138,8 @@ ringbuffer* rbf_destroy(ringbuffer *rbf)
   
   if(rbf == NULL)
     return NULL;
+  
+  
   
   return NULL;
 }
@@ -147,6 +190,7 @@ int rbf_is_empty(ringbuffer *rbf)
 {
   if(rbf->head == rbf->tail)
     return 1;
+  
   return 0;
 }
 

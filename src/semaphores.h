@@ -18,8 +18,16 @@
 #include <stdlib.h>
 #include <semaphore.h>
 
-//int sem_create(sem_t*,int, unsigned int);
-sem_t* sem_create(void);
+typedef struct _semaphore
+{
+  const char *sem_name;
+  sem_t *sem;
+  const size_t max_value;
+} semaphore;
+
+semaphore* sem_create(const char*, size_t);
 const char* sem_getname(void);
+size_t sem_val(semaphore *);
+int sem_del(semaphore *);
 
 #endif /* semaphores.h */

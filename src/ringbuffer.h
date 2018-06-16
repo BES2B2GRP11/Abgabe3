@@ -17,6 +17,8 @@
 #define __ringbuffer_h
 
 #include <stdint.h>
+#include <semaphore.h>
+#include "semaphores.h"
 
 typedef struct _ringbuffer
 {
@@ -25,6 +27,8 @@ typedef struct _ringbuffer
   int head;          /* Administrative ringbuffer sachen */
   int tail;
   const size_t max_length;
+  semaphore *sem_shm;
+  semaphore *sem_buffer;
 } ringbuffer;
 
 ringbuffer* rbf_init(size_t);
