@@ -102,7 +102,8 @@ static void print_error(int sys_meld, const char *fmt, va_list az)
   vsprintf(buffer, fmt, az);
   //  if(sys_meld && errno != 0)
   sprintf(buffer+strlen(buffer), ": %s\n", strerror(errno));
-  fflush(NULL);
+  //  fprintf(stderr,"%s", buffer);
+  //  fflush(NULL);
   return;
 
 }		/* -----  end of function print_error  ----- */
@@ -148,6 +149,7 @@ void handle_error (enum ERRORTYPE error_type, const char* fmt, ...)
     {
       if(errno == EINVAL)
 	{
+	  fprintf(stderr,"[FATAL]:%s\n",strerror(errno));
 	  exit(errno);
 	}
     }

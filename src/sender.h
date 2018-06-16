@@ -17,6 +17,7 @@
 #define __sender_h
 
 const char *help_message =
+  " Usage: sender -m <buffergroesse>\n"
   "       <<< sender help >>>       \n"
   "---------------------------------\n"
   "-h           Gibt diese Hilfe aus\n"

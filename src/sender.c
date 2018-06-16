@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <error.h>
 #include <errno.h>
+#include <string.h>
 #include "sender.h"
 #include "ringbuffer.h"
 #include "error_handling.h"
@@ -86,12 +87,28 @@ int main(int argc, char** argv)
 	  print_help();
 	  return EXIT_SUCCESS;
 	case 'm':
+	  /* echt .... ....... .... ... ...... */
+	  if(!strncmp(optarg,"-",1))
+	    {
+	      print_help();
+	      errno=EINVAL;
+	      handle_error(FATAL,"Unknown option %s",argv);
+	      exit(errno);
+	    }
 	  ringbuf_elmnts=strtol(optarg,NULL,10);
 	  break;
 	default:
+	  print_help();
 	  errno=EINVAL;
 	  handle_error(FATAL,"Unknown option %s",argv);
+	  exit(errno);
 	}
+    }
+
+  if(ringbuf_elmnts <= 0 || ringbuf_elmnts >= ((size_t)-1))
+    {
+      print_help();
+      exit(EINVAL);
     }
 
   rbf=rbf_init(ringbuf_elmnts);
@@ -114,14 +131,14 @@ int main(int argc, char** argv)
 
 void print_help(void)
 {
-  puts(help_message);
+  fputs(help_message,stderr);
   fflush(stdout);
 }
 
 void cleanup()
 {
   /* cleanup fuer den ringbuffer */
-  if(rbf_is_empty(rbf) == 1)
+  if(rbf != NULL && rbf_is_empty(rbf) == 1)
     rbf_destroy(rbf);
   
 }

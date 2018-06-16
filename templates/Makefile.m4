@@ -69,5 +69,8 @@ liberrorhandling.o: error_handling.c error_handling.h
 clean:
 	$(RM) *.a *.o *~ sender empfaenger
 
+doxy dox doc: 
+	doxygen doxygen.dcf 1> /dev/null
+
 .PHONY: clean 
 

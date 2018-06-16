@@ -18,6 +18,7 @@
 
 
 const char *help_message =
+  " Usage: sender -m <buffergroesse>\n"
   "     <<< empfaenger help >>>     \n"
   "---------------------------------\n"
   "-h           Gibt diese Hilfe aus\n"

@@ -29,7 +29,7 @@
 ##
 ##
 
-CC=gcc
+CC=gcc52
 SUBDIRS=src
 RM=-rm -rf
 CFLAGS=-Wall -pedantic -Werror -Wextra -Wstrict-prototypes -Wformat=2 -fno-common -ftrapv -g -O3 -std=gnu89
@@ -37,7 +37,7 @@ SRC_DIR=src
 EXAMPLE_DIR=examples
 DOC_DIR=doc
 TEST_DIR=test
-DIST_DIR=bes2_grp11
+DIST_DIR=bes3_grp11
 DISTNAME="$(DIST_DIR).zip"
 TARBALL=$(DIST_DIR).tar.bz2
 TAR=tar -cvjf
@@ -54,15 +54,15 @@ test: clean all
 
 dist-check:
 	mkdir check-$(DIST_DIR)
-	cp -r $(SRC_DIR)/mypopen.{c,h} Makefile check-$(DIST_DIR)
+	cp -r $(SRC_DIR)/*.{c,h} Makefile check-$(DIST_DIR)
 	m4 templates/Makefile.m4 > check-$(DIST_DIR)/Makefile
 	m4 templates/doxygen.m4 > check-$(DIST_DIR)/doxygen.dcf
-	cd check-$(DIST_DIR) && make test && make doc && make clean
+	cd check-$(DIST_DIR) && make doc && make clean
 	rm -rf check-$(DIST_DIR)
 
 dist: distclean dist-check
 	mkdir $(DIST_DIR)
-	cp -r $(SRC_DIR)/mypopen.{c,h} doxygen.dcf Makefile $(DIST_DIR)
+	cp -r $(SRC_DIR)/*.{c,h} doxygen.dcf Makefile $(DIST_DIR)
 	m4 templates/Makefile.m4 > $(DIST_DIR)/Makefile
 	m4 templates/doxygen.m4 > $(DIST_DIR)/doxygen.dcf
 	$(ZIP) $(DISTNAME) $(DIST_DIR) 1> /dev/null &&\
