@@ -98,8 +98,19 @@ int main(int argc, char** argv)
 #ifdef DEBUG
   DBG("Got a ringbuffer with max_length %ld",rbf->max_length);
 #endif
-  rbf_write(rbf,'c');
-  rbf_write(rbf,'y');
+
+  c='a';
+  
+  do
+    {
+      //read(STDIN_FILENO , &c ,  sizeof( c ));
+      c=getchar();
+      rbf_write(rbf,c);
+    } while (c != EOF);
+
+#ifdef DEBUG
+  DBG("Got EOF... cleaning up");
+#endif
   
   return EXIT_SUCCESS;
 }

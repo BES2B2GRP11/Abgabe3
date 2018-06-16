@@ -28,6 +28,10 @@ semaphore* sem_create(const char *name, size_t value)
 {
   semaphore *s;
 
+#ifdef DEBUG
+  DBG("Creating/Opening requested semaphore with name %s and size %ld", name, value);
+#endif
+  
   semaphore local =
     {
       .sem_name = name,
@@ -73,9 +77,32 @@ size_t sem_val(semaphore *s)
 
 int sem_del(semaphore *s)
 {
+
+  if(s == NULL || sem_val(s) < s->max_value)
+    {
+#ifdef DEBUG
+    DBG("Nothing to do, someone is still using the sem buffer with sem_shm at %d", sem_val(s));
+#endif
+    return 0;
+    }
+  
+  if(s != NULL && sem_val(s) < s->max_value)
+    {
+#ifdef DEBUG
+      DBG("Got sem semaphore value %ld", sem_val(s));
+      DBG("Setting sem semaphore up");
+#endif
+      sem_post(s->sem);
+#ifdef DEBUG
+      DBG("Got sem semaphore value %ld", sem_val(s));
+#endif
+    }
+
 #ifdef DEBUG
   DBG("unlinking semaphore %s",s->sem_name);
 #endif
-  sem_unlink(s->sem_name);
+
+  if(sem_val(s) >= s->max_value)
+    sem_unlink(s->sem_name);
   return 0;
 }

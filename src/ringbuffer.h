@@ -28,14 +28,16 @@ typedef struct _ringbuffer
   int tail;
   const size_t max_length;
   semaphore *sem_shm;
-  semaphore *sem_buffer;
+  //  semaphore *sem_buffer;
+  semaphore *sem_buffer_readable;
+  semaphore *sem_buffer_writeable;
 } ringbuffer;
 
 ringbuffer* rbf_init(size_t);
 ringbuffer* rbf_destroy(ringbuffer*);
 int rbf_write(ringbuffer*,uint8_t);
-int rbf_read(ringbuffer*,uint8_t);
+int rbf_read(ringbuffer*,uint8_t*);
 int rbf_is_full(ringbuffer*);
 int rbf_is_empty(ringbuffer*);
-
+int rbf_is_active(ringbuffer *);
 #endif /* ringbuffer.h */

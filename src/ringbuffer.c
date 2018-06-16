@@ -35,14 +35,19 @@ ringbuffer* rbf_init(size_t n)
   ringbuffer *p;
   const char *name = NULL;
   const char *sem_shm_name = NULL;
-  const char *sem_buffer_name = NULL;
+  //  const char *sem_buffer_name = NULL;
+  const char *sem_buffer_readable_name = NULL;
+  const char *sem_buffer_writeable_name = NULL;
+  ++n;
 #ifdef DEBUG
-  DBG("Creating a buffer with a requested size %ld",++n);
+  DBG("Creating a buffer with a requested size %ld",n);
 #endif
 
   name = shm_getname();
   sem_shm_name = sem_getname();
-  sem_buffer_name = sem_getname();
+  //  sem_buffer_name = sem_getname();
+  sem_buffer_readable_name = sem_getname();
+  sem_buffer_writeable_name = sem_getname();
   ringbuffer local = {
     /* shm_reate()... wir erstellen das file nur */
     /* wir verwenden den fd dann im jeweiligen programm fuer shmat */
@@ -53,7 +58,9 @@ ringbuffer* rbf_init(size_t n)
     .tail = 0,
     .max_length = n, /* shm datei wurde bereits getrunated auf n */
     .sem_shm = sem_create(sem_shm_name, 2),
-    .sem_buffer = sem_create(sem_buffer_name, 1)
+    //.sem_buffer = sem_create(sem_buffer_name, 1),
+    .sem_buffer_readable = sem_create(sem_buffer_readable_name, 1),
+    .sem_buffer_writeable = sem_create(sem_buffer_writeable_name, 1)
   };
 
   if (local.buffer == NULL)
@@ -73,8 +80,10 @@ ringbuffer* rbf_init(size_t n)
     }
 
 #ifdef DEBUG
-  DBG("shm semaphore    initialized at %ld",sem_val(local.sem_shm));
-  DBG("buffer semaphore initialized at %ld",sem_val(local.sem_buffer));
+  DBG("shm              semaphore initialized at %ld",sem_val(local.sem_shm));
+  //  DBG("buffer           semaphore initialized at %ld",sem_val(local.sem_buffer));
+  DBG("buffer readable  semaphore initialized at %ld",sem_val(local.sem_buffer_readable));
+  DBG("buffer readable  semaphore initialized at %ld",sem_val(local.sem_buffer_writeable));
 #endif
   
   memcpy(p,&local,sizeof(ringbuffer));
@@ -84,43 +93,11 @@ ringbuffer* rbf_init(size_t n)
 
 ringbuffer* rbf_destroy(ringbuffer *rbf)
 {
-  /* wenn kein prozess mehr im geschuetzten bereich (counting semaphore) */
-  /* shm_unlink rbf->buffer */
 
-  if(rbf->sem_shm != NULL && sem_val(rbf->sem_shm) < rbf->sem_shm->max_value)
-    {
-#ifdef DEBUG
-  DBG("Got sem semaphore value %ld", sem_val(rbf->sem_shm));
-  DBG("Setting sem semaphore up");
-#endif
-      sem_post(rbf->sem_shm->sem);
-#ifdef DEBUG
-  DBG("Got sem semaphore value %ld", sem_val(rbf->sem_shm));
-#endif
-    } else{
-#ifdef DEBUG
-    DBG("Got sem semaphore value %ld", sem_val(rbf->sem_shm));
-#endif
-  }
-  
-  if(sem_val(rbf->sem_shm) >= rbf->sem_shm->max_value)
-    sem_del(rbf->sem_shm);
-
-  if(rbf->sem_buffer != NULL && sem_val(rbf->sem_buffer) < rbf->sem_buffer->max_value)
-    {
-#ifdef DEBUG
-  DBG("Got buffer semaphore value %ld", sem_val(rbf->sem_buffer));
-  DBG("Setting buffer semaphore up");
-#endif
-      sem_post(rbf->sem_buffer->sem);
-#ifdef DEBUG
-  DBG("Got buffer semaphore value %ld", sem_val(rbf->sem_buffer));
-#endif
-    }  
-  
-  if(sem_val(rbf->sem_buffer) >= rbf->sem_buffer->max_value)
-    sem_del(rbf->sem_buffer);
-
+  sem_del(rbf->sem_shm);
+  //  sem_del(rbf->sem_buffer);
+  sem_del(rbf->sem_buffer_readable);
+  sem_del(rbf->sem_buffer_writeable);
   
 #ifdef DEBUG
   DBG("Deconstructing ringbuffer");
@@ -146,15 +123,12 @@ ringbuffer* rbf_destroy(ringbuffer *rbf)
 
 int rbf_write(ringbuffer *rbf, uint8_t data)
 {
+  if(rbf == NULL)
+    return -1;
+  //#ifdef DEBUG
+  //  DBG("Inserting %c into ringbuffer @ %ld",data, rbf->head);
+  //#endif
 
-#ifdef DEBUG
-  DBG("Inserting %c into ringbuffer @ %ld",data, rbf->head);
-#endif
-  
-  //semaphore hier her
-  if(rbf_is_full(rbf))
-    return -1; /* hier warten */
-  
   /* wir mappen es nur beim ersten Aufruf */
   if(shm == NULL)
     {
@@ -166,18 +140,65 @@ int rbf_write(ringbuffer *rbf, uint8_t data)
   DBG("shm is located at %p",shm);
   DBG("writing to is located at %p",shm+rbf->head);
 #endif
+
+  if(rbf_is_full(rbf))
+    {
+      if(sem_val(rbf->sem_buffer_readable) != rbf->sem_buffer_readable->max_value)
+	sem_post(rbf->sem_buffer_readable->sem);
+      
+      sem_wait(rbf->sem_buffer_writeable->sem);
+    }
   
   *(shm+rbf->head) = data;
 
-#ifdef DEBUG
-  fprintf(stdout,"Wrote %c\n", *(shm+rbf->head));
-#endif
+  //#ifdef DEBUG
+  //  fprintf(stdout,"Wrote %c\n", *(shm+rbf->head));
+  //#endif
 
   if(++rbf->head >= (signed int)rbf->max_length)
       rbf->head = 0;
 
+
+  if(sem_val(rbf->sem_buffer_readable) != rbf->sem_buffer_readable->max_value)
+    sem_post(rbf->sem_buffer_readable->sem);
+  
   return 0;
 }
+
+int rbf_read(ringbuffer *rbf, uint8_t *data)
+{
+  if(rbf == NULL)
+    return -1; /* error handling missing */
+  
+  /* wir mappen es nur beim ersten Aufruf */
+  if(shm == NULL)
+    {
+      shm = (char*) mmap(NULL,rbf->max_length,PROT_READ|PROT_WRITE, MAP_SHARED, *rbf->buffer,0);
+    }  
+  
+  if(rbf_is_empty(rbf))
+    {
+      if(sem_val(rbf->sem_buffer_writeable) != rbf->sem_buffer_writeable->max_value)
+	sem_post(rbf->sem_buffer_writeable->sem);
+      
+      sem_wait(rbf->sem_buffer_readable->sem);
+    }
+  
+  *data = *(shm+rbf->tail); // Read data and then move
+
+  //#ifdef DEBUG
+  //  fprintf(stdout,"read %c\n", *data);
+  //#endif
+
+  if(++rbf->tail >= (signed int)rbf->max_length)
+      rbf->tail = 0;
+
+  if(sem_val(rbf->sem_buffer_writeable) != rbf->sem_buffer_writeable->max_value)
+    sem_post(rbf->sem_buffer_writeable->sem);
+
+  return 0;
+}
+
 
 int rbf_is_full(ringbuffer *rbf)
 {
@@ -194,3 +215,11 @@ int rbf_is_empty(ringbuffer *rbf)
   return 0;
 }
 
+int rbf_is_active(ringbuffer *rbf)
+{
+  /* define einige parameter im header fuer die 2 hier */
+  if(sem_val(rbf->sem_shm) < rbf->sem_shm->max_value)
+    return 1;
+
+  return 0;
+}

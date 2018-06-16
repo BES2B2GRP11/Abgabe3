@@ -16,8 +16,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "empfaenger.h"
+#include <error.h>
+#include <errno.h>
+#include "sender.h"
 #include "ringbuffer.h"
+#include "error_handling.h"
 
 /*                          +----------------------------------------------------------------------------------+ */
 /*                          |  [Datei mit n fixen Bloecken in /dev/shm als circular-linked-list] == ringbuffer | */
@@ -66,25 +69,67 @@
 /*                                 Der Ring buffer Semaphore wird verwendet um das Lesen und Schreiben */
 /*                                 in dem Ringbuffer zu Synchronisieren. */
 
+
+
+
+/*
+ * =====================================================================================
+ *
+ *       Filename:  sender.c
+ *
+ *    Description:  sender fuer Ringbuffer Broadcast-Nachrichten via /dev/shm
+ *
+ *        Version:  1.0.0
+ *        Created:  04/30/2018 10:20:05 AM
+ *       Revision:  none
+ *       Compiler:  gcc52
+ *
+ *         Author:  Ovidiu - Dan Bogat [ic17b501], ic17b501@technikum-wien.at
+ * =====================================================================================
+ */
+
+static ringbuffer *rbf;
+
 int main(int argc, char** argv)
 {
-  argc=argc; 
-  argv=argv;
-  int c;
-  
-  while((c = getopt(argc, argv, "h")) != -1)
-  {
-    switch (c)
-    {
-      case 'h':
-        print_help();
-        return EXIT_SUCCESS;
-      default:
-        return EXIT_FAILURE;
-    }
-    
-  }
+  atexit(cleanup);
+  rbf = NULL;
+  size_t ringbuf_elmnts=0; //size_t mit strtol hat ein ende 
+  int c=0;
 
+  while((c = getopt (argc, argv, "hm:")) != -1)
+    {
+      switch (c)
+	{
+	case 'h':
+	  print_help();
+	  return EXIT_SUCCESS;
+	case 'm':
+	  ringbuf_elmnts=strtol(optarg,NULL,10);
+	  break;
+	default:
+	  errno=EINVAL;
+	  handle_error(FATAL,"Unknown option %s",argv);
+	}
+    }
+
+  rbf=rbf_init(ringbuf_elmnts);
+#ifdef DEBUG
+  DBG("Got a ringbuffer with max_length %ld",rbf->max_length);
+#endif
+
+
+  do
+    {
+      rbf_read(rbf,(uint8_t *)&c);
+      if(c!=EOF)
+	fprintf(stdout,"%c",c);      
+    } while (c!=EOF);
+
+#ifdef DEBUG
+  DBG("Got EOF... cleaning up");
+#endif
+  
   return EXIT_SUCCESS;
 }
 
@@ -92,4 +137,12 @@ void print_help(void)
 {
   puts(help_message);
   fflush(stdout);
+}
+
+void cleanup()
+{
+  /* cleanup fuer den ringbuffer */
+  if(rbf)
+    rbf_destroy(rbf);
+  
 }

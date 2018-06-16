@@ -41,7 +41,7 @@ int *shm_create(size_t n, char *name)
   /* POSIX FTW --> shm_open gefolgt von mmap <-- arbeitet mit file-descriptors */
   *shm_fd = shm_open(
 		     name,
-		     O_CREAT | O_EXCL | O_RDWR, //man shm_open
+		     O_CREAT | O_RDWR, //man shm_open
 		     0666
 		     );
 

@@ -29,5 +29,5 @@ semaphore* sem_create(const char*, size_t);
 const char* sem_getname(void);
 size_t sem_val(semaphore *);
 int sem_del(semaphore *);
-
+int sem_clean(semaphore*);
 #endif /* semaphores.h */
