@@ -99,11 +99,8 @@ int main(int argc, char** argv)
   DBG("Got a ringbuffer with max_length %ld",rbf->max_length);
 #endif
 
-  c='a';
-  
   do
     {
-      //read(STDIN_FILENO , &c ,  sizeof( c ));
       c=getchar();
       rbf_write(rbf,c);
     } while (c != EOF);
@@ -124,7 +121,7 @@ void print_help(void)
 void cleanup()
 {
   /* cleanup fuer den ringbuffer */
-  if(rbf)
+  if(rbf_is_empty(rbf) == 1)
     rbf_destroy(rbf);
   
 }

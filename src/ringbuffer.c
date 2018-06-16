@@ -93,7 +93,6 @@ ringbuffer* rbf_init(size_t n)
 
 ringbuffer* rbf_destroy(ringbuffer *rbf)
 {
-
   sem_del(rbf->sem_shm);
   //  sem_del(rbf->sem_buffer);
   sem_del(rbf->sem_buffer_readable);
@@ -115,13 +114,12 @@ ringbuffer* rbf_destroy(ringbuffer *rbf)
   
   if(rbf == NULL)
     return NULL;
-  
-  
+   
   
   return NULL;
 }
 
-int rbf_write(ringbuffer *rbf, uint8_t data)
+int rbf_write(ringbuffer *rbf, char data)
 {
   if(rbf == NULL)
     return -1;
@@ -141,7 +139,7 @@ int rbf_write(ringbuffer *rbf, uint8_t data)
   DBG("writing to is located at %p",shm+rbf->head);
 #endif
 
-  if(rbf_is_full(rbf))
+  if(rbf_is_full(rbf) == 1)
     {
       if(sem_val(rbf->sem_buffer_readable) != rbf->sem_buffer_readable->max_value)
 	sem_post(rbf->sem_buffer_readable->sem);
@@ -161,11 +159,13 @@ int rbf_write(ringbuffer *rbf, uint8_t data)
 
   if(sem_val(rbf->sem_buffer_readable) != rbf->sem_buffer_readable->max_value)
     sem_post(rbf->sem_buffer_readable->sem);
+
+  fputc(data,stdout);
   
   return 0;
 }
 
-int rbf_read(ringbuffer *rbf, uint8_t *data)
+int rbf_read(ringbuffer *rbf, char *data)
 {
   if(rbf == NULL)
     return -1; /* error handling missing */
@@ -176,7 +176,7 @@ int rbf_read(ringbuffer *rbf, uint8_t *data)
       shm = (char*) mmap(NULL,rbf->max_length,PROT_READ|PROT_WRITE, MAP_SHARED, *rbf->buffer,0);
     }  
   
-  if(rbf_is_empty(rbf))
+  if(rbf_is_empty(rbf) == 1)
     {
       if(sem_val(rbf->sem_buffer_writeable) != rbf->sem_buffer_writeable->max_value)
 	sem_post(rbf->sem_buffer_writeable->sem);
@@ -209,6 +209,9 @@ int rbf_is_full(ringbuffer *rbf)
 
 int rbf_is_empty(ringbuffer *rbf)
 {
+  if(sem_val(rbf->sem_buffer_readable) == rbf->sem_buffer_readable->max_value)
+    return 1;
+     
   if(rbf->head == rbf->tail)
     return 1;
   

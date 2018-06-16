@@ -34,7 +34,7 @@ CC=gcc
 SOURCES=sender.c empfaenger.c ringbuffer.c
 DEPS=sender.h empfaenger.h 
 OBJECTS=sender.o empfaenger.o 
-CFLAGS=-DDEBUG -Wall -pedantic -Werror -Wextra -Wstrict-prototypes -Wformat=2 -fno-common -ftrapv -g -O3 -std=gnu11 -static -fbuiltin
+CFLAGS=-DNODEBUG -Wall -pedantic -Werror -Wextra -Wstrict-prototypes -Wformat=2 -fno-common -ftrapv -g -O3 -std=gnu11 -static -fbuiltin
 LIBS=-lringbuffer -lsharedmem -lsemaphores -lerrorhandling -Wl,--whole-archive -lrt -lpthread -Wl,--no-whole-archive
 LDFLAGS=-L. $(LIBS)
 

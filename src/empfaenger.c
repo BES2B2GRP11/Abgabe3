@@ -96,7 +96,8 @@ int main(int argc, char** argv)
   rbf = NULL;
   size_t ringbuf_elmnts=0; //size_t mit strtol hat ein ende 
   int c=0;
-
+  char i;
+  
   while((c = getopt (argc, argv, "hm:")) != -1)
     {
       switch (c)
@@ -117,14 +118,12 @@ int main(int argc, char** argv)
 #ifdef DEBUG
   DBG("Got a ringbuffer with max_length %ld",rbf->max_length);
 #endif
-
-
+  
   do
     {
-      rbf_read(rbf,(uint8_t *)&c);
-      if(c!=EOF)
-	fprintf(stdout,"%c",c);      
-    } while (c!=EOF);
+      rbf_read(rbf,&i);
+      fputc(i,stdout);
+    } while (i != EOF);
 
 #ifdef DEBUG
   DBG("Got EOF... cleaning up");
@@ -142,7 +141,6 @@ void print_help(void)
 void cleanup()
 {
   /* cleanup fuer den ringbuffer */
-  if(rbf)
-    rbf_destroy(rbf);
-  
+  if(rbf_is_empty(rbf) == 1)
+    rbf_destroy(rbf);  
 }

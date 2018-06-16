@@ -35,8 +35,8 @@ typedef struct _ringbuffer
 
 ringbuffer* rbf_init(size_t);
 ringbuffer* rbf_destroy(ringbuffer*);
-int rbf_write(ringbuffer*,uint8_t);
-int rbf_read(ringbuffer*,uint8_t*);
+int rbf_write(ringbuffer*,char);
+int rbf_read(ringbuffer*,char*);
 int rbf_is_full(ringbuffer*);
 int rbf_is_empty(ringbuffer*);
 int rbf_is_active(ringbuffer *);
